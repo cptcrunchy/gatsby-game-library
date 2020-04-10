@@ -1,21 +1,56 @@
 import React from "react"
-import { Link } from "gatsby"
+import { Link, graphql } from "gatsby"
+import styled from "styled-components"
 
 import Layout from "../components/layout"
-import Image from "../components/image"
 import SEO from "../components/seo"
+import GameCard from "../components/GameCard"
 
-const IndexPage = () => (
-  <Layout>
-    <SEO title="Home" />
-    <h1>Hi people</h1>
-    <p>Welcome to your new Gatsby site.</p>
-    <p>Now go build something great.</p>
-    <div style={{ maxWidth: `300px`, marginBottom: `1.45rem` }}>
-      <Image />
-    </div>
-    <Link to="/page-2/">Go to page 2</Link>
-  </Layout>
-)
+const GamesWrapper = styled.div`
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+`
+
+const IndexPage = (props) => {
+
+    const games = props.data.allGames.edges;
+    
+    console.log("Array is games:", games)
+    return (
+        <Layout>
+
+            <SEO title="Home" />
+            <h1>Welcome to Gatsby Games.</h1>
+            <GamesWrapper>
+                {games.map(game => (
+                    <GameCard
+                        gameId={game.node.id}
+                        gameTitle={game.node.title}
+                        gamePlatform={game.node.platform}
+                        gameRelease={game.node.released}
+                    />
+                        
+                ))}
+            </GamesWrapper>
+            <Link to="/page-2/">Go to page 2</Link>
+        </Layout>
+    )
+}
+
+export const data = graphql`
+    query AllGamesQuery {
+        allGames {
+            edges {
+                node {
+                id
+                platform
+                released
+                title
+                }
+            }
+        }
+    }
+`
 
 export default IndexPage
